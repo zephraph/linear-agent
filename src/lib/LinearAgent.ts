@@ -136,11 +136,13 @@ export class LinearAgent extends EventEmitter<LinearAgentEvents> {
     const client = new LinearClient({ apiKey: token, apiUrl: this.apiUrl ? `${this.apiUrl}/graphql` : undefined });
 
     if (body.action === "issueCommentMention") {
-      const { notification } = body;
+      const { notification, agentContextId } = body;
+      if (!agentContextId) return;
+
       this.emit('mention', {
         content: notification.comment.body,
         showProgress(message: string): Promise<AgentProgression> {
-          return AgentProgression.start(client, notification.comment.id, message);
+          return AgentProgression.start(client, agentContextId, message);
         },
         wait(ms: number): Promise<void> {
           return new Promise(resolve => setTimeout(resolve, ms));

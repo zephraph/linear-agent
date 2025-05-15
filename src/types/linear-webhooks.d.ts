@@ -42,6 +42,7 @@ export type LinearWebhookPayload = {
   organizationId: string;
   oauthClientId: string;
   appUserId: string;
+  agentContextId?: string;
   notification: IssueCommentMentionNotification; // This will become a union type as we add more
   webhookTimestamp: number;
   webhookId: string;
