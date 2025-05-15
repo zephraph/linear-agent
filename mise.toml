@@ -1,0 +1,44 @@
+[tools]
+mkcert = "1.4.4"
+node = "22.15.0"
+pnpm = "10.10.0"
+
+[settings]
+# Enabled for hooks (https://mise.jdx.dev/hooks.html#preinstall-postinstall-hook)
+experimental = true
+
+[hooks]
+postinstall = ["setup"]
+
+[env]
+_.file = ".env"              # Loads .env file
+_.path = "node_modules/.bin" # Adds node_modules/.bin to PATH
+
+[tasks.dev]
+env = { LOG_LEVEL = "debug", NODE_TLS_REJECT_UNAUTHORIZED = "0", NODE_ENV = "development" }
+depends = ["generate-certs"]
+run = "pnpm run dev | pino-pretty"
+
+[tasks.start]
+depends = ["generate-certs"]
+run = "pnpm run start"
+
+[tasks.generate-certs]
+dir = "certs"
+run = """
+[ ! -f linear.agent.pem ] && [ ! -f linear.agent-key.pem ] && mkcert linear.agent || echo "Certificates already exist"
+"""
+
+[tasks."db:generate"]
+run = "pnpm dlx @better-auth/cli generate"
+
+[tasks."db:migrate"]
+run = "pnpm dlx @better-auth/cli migrate"
+
+[tasks.setup]
+run = """
+[ -f .env ] || cp .env.example .env
+pnpm install
+pnpm dlx @better-auth/cli generate
+pnpm dlx @better-auth/cli migrate
+"""
