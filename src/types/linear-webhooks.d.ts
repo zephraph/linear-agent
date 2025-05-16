@@ -27,6 +27,13 @@ export type IssueCommentMentionNotification = {
     userId: string;
     issueId: string;
   };
+  parentCommentId?: string;
+  parentComment?: {
+    id: string;
+    body: string;
+    userId: string;
+    issueId: string;
+  };
   actor: {
     id: string;
     name: string;
@@ -42,6 +49,7 @@ export type LinearWebhookPayload = {
   organizationId: string;
   oauthClientId: string;
   appUserId: string;
+  agentContextId?: string;
   notification: IssueCommentMentionNotification; // This will become a union type as we add more
   webhookTimestamp: number;
   webhookId: string;

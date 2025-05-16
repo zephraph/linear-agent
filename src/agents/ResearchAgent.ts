@@ -7,7 +7,9 @@ const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY })
 export const researchAgent = new LinearAgent({ webhookSecret: env.LINEAR_WEBHOOK_SECRET, apiUrl: env.API_URL });
 
 researchAgent.on('mention', async (ctx) => {
-  const progression = await ctx.showProgress('Researching...')
+  const action = await ctx.startAction({ mode: "act", message: 'thinking...' })
+
+  await ctx.wait(1000)
 
   const response = await openai.responses.create({
     model: 'gpt-4o-mini',
@@ -15,14 +17,12 @@ researchAgent.on('mention', async (ctx) => {
     input: ctx.content
   });
 
-  await ctx.wait(1000)
-
-  await progression.update("Searching the web for more information...")
+  await action.update({ mode: "search", message: 'Searching the web for more information...' })
 
   await ctx.wait(1000)
 
-  await progression.done();
+  await action.update({ mode: "act", message: 'done' })
 
-  ctx.reply(response.output_text);
+  await ctx.reply(response.output_text);
 })
 
