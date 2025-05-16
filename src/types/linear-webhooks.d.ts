@@ -27,6 +27,13 @@ export type IssueCommentMentionNotification = {
     userId: string;
     issueId: string;
   };
+  parentCommentId?: string;
+  parentComment?: {
+    id: string;
+    body: string;
+    userId: string;
+    issueId: string;
+  };
   actor: {
     id: string;
     name: string;
